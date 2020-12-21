@@ -1,6 +1,8 @@
 use config::ConfigError;
 use serde::Deserialize;
 
+// Structs for our enviroment variables
+
 #[derive(Deserialize, Clone)]
 pub struct ServerConfig {
     pub host: String,
@@ -9,7 +11,6 @@ pub struct ServerConfig {
 #[derive(Deserialize, Clone)]
 pub struct Auth {
     pub salt: String,
-    // pub timeout: u16,
 }
 
 #[derive(Deserialize, Clone)]

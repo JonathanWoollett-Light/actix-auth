@@ -29,29 +29,26 @@ pub async fn login(
     // Unwraps `web::Json<UserLogin>` into `UserLogin`
     let data = json.into_inner();
 
-    // Hashes
-    let hash_result = argon2::hash_encoded(data.password.as_bytes(), SALT, &Config::default());
+    // Hashes password
+    let hash = argon2::hash_encoded(data.password.as_bytes(), SALT, &Config::default()).unwrap();
 
     // The error checking here is awkward, but it is clear,
     //  the ways I've seen it done in other projects are not clear to me.
     // If you care to make this better without adding new directories and files,
     //  it would be appreciated.
-    match hash_result {
-        Ok(hash) => match database::login(db_client.get_ref(), &data.email, &hash).await {
-            Ok(Some(user)) => {
-                id.remember(user._id.to_string());
-                HttpResponse::Ok().json(user)
-            }
-            Ok(None) => HttpResponse::Unauthorized().into(),
-            Err(_) => HttpResponse::InternalServerError().into(),
-        },
+    match database::login(db_client.get_ref(), &data.email, &hash).await {
+        Ok(Some(user)) => {
+            id.remember(user._id.to_string()); // Constructs cookie session
+            HttpResponse::Ok().json(user)
+        }
+        Ok(None) => HttpResponse::Unauthorized().into(),
         Err(_) => HttpResponse::InternalServerError().into(),
     }
 }
 
 // Logs out
 pub async fn logout(_db_client: web::Data<Client>, id: Identity) -> impl Responder {
-    id.forget();
+    id.forget(); // Destructs the cookie session
     HttpResponse::Ok().finish()
 }
 

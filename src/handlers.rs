@@ -17,7 +17,10 @@ pub async fn register(
     db_client: web::Data<Client>,
     json: web::Json<UserRegister>,
 ) -> impl Responder {
-    respond(database::register(db_client.get_ref(), json.into_inner()).await)
+    respond(database::register(
+        db_client.get_ref(), // Gets reference to `Client`
+        json.into_inner() // Unwraps `web::Json<UserRegister>` into `UserRegister`
+    ).await)
 }
 
 // Logs in

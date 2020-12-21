@@ -22,6 +22,6 @@ impl Config {
     pub fn from_env() -> Result<Self, ConfigError> {
         let mut cfg = config::Config::new();
         cfg.merge(config::Environment::new())?;
-        return cfg.try_into();
+        cfg.try_into()
     }
 }

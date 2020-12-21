@@ -11,7 +11,7 @@ use mongodb::Client;
 use std::{env, io::Result};
 
 // Salt for encrypting passwords
-const SALT: &[u8] = "=F#!AA9Ev$Ve3m@FUenH-uz?ccYkf,".as_bytes();
+const SALT: &[u8] = b"=F#!AA9Ev$Ve3m@FUenH-uz?ccYkf,";
 
 // "cargo run <username> <password>"
 

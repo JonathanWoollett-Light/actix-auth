@@ -17,7 +17,7 @@ pub async fn register(
 
     // Inserts user into database
     //
-    // If for example wanted emails to be unique, you would
+    // If for you wanted emails to be unique, you would
     //  add the unique index externally (compass/mongod) and
     //  then this insert would fail when trying to add a user
     //  with a duplicate email.

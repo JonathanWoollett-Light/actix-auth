@@ -27,6 +27,7 @@ async fn main() -> Result<()> {
     let args: Vec<String> = env::args().collect();
 
     // Connects to MongoDB database
+    // (right now setup for connecting to atlass cluster)
     let uri_str = format!(
         "mongodb+srv://{}:{}@cluster0.wwsrh.mongodb.net/local?retryWrites=true&w=majority",
         args[1], args[2]

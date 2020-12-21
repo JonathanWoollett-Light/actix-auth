@@ -26,8 +26,12 @@ pub async fn login(
     json: web::Json<UserLogin>,
     id: Identity,
 ) -> impl Responder {
+    // Unwraps `web::Json<UserLogin>` into `UserLogin`
     let data = json.into_inner();
+
+    // Hashes
     let hash_result = argon2::hash_encoded(data.password.as_bytes(), SALT, &Config::default());
+
     // The error checking here is awkward, but it is clear,
     //  the ways I've seen it done in other projects are not clear to me.
     // If you care to make this better without adding new directories and files,
@@ -53,13 +57,14 @@ pub async fn logout(_db_client: web::Data<Client>, id: Identity) -> impl Respond
 
 // Gets user data
 pub async fn get_user(db_client: web::Data<Client>, id: Identity) -> impl Responder {
-    // If
+    // If user cookie has some id
     if let Some(_id) = id.identity() {
         return auth_respond(database::get_user(db_client.get_ref(), _id).await);
     }
     return HttpResponse::InternalServerError().into();
 }
 
+// A couple utility functions to make returns a bit cleaner
 fn respond<T: Serialize, P>(result: Result<T, P>) -> HttpResponse {
     match result {
         Ok(item) => HttpResponse::Ok().json(item),

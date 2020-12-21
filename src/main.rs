@@ -13,7 +13,11 @@ use std::{env, io::Result};
 // Salt for encrypting passwords
 const SALT: &[u8] = b"=F#!AA9Ev$Ve3m@FUenH-uz?ccYkf,";
 
-// "cargo run <username> <password>"
+// The names of the database and collection we want to use.
+const DB: &str = "auth";
+const COLLECTION: &str = "users";
+
+// Run with: "cargo run <username> <password>"
 
 #[actix_rt::main]
 async fn main() -> Result<()> {
@@ -41,9 +45,9 @@ async fn main() -> Result<()> {
     // Starts server
     HttpServer::new(move || {
         App::new()
-            // Database
+            // Adds database connection client to server data
             .data(client.clone())
-            // Auth
+            // Adds auth service
             .wrap(IdentityService::new(
                 CookieIdentityPolicy::new(&move_config.auth.salt.as_bytes()).secure(false), // Restrict to https?
             ))

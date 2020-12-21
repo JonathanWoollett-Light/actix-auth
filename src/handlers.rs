@@ -32,10 +32,7 @@ pub async fn login(
     // Hashes password
     let hash = argon2::hash_encoded(data.password.as_bytes(), SALT, &Config::default()).unwrap();
 
-    // The error checking here is awkward, but it is clear,
-    //  the ways I've seen it done in other projects are not clear to me.
-    // If you care to make this better without adding new directories and files,
-    //  it would be appreciated.
+    // The error checking here is a little awkward, but it is clear.
     match database::login(db_client.get_ref(), &data.email, &hash).await {
         Ok(Some(user)) => {
             id.remember(user._id.to_string()); // Constructs cookie session

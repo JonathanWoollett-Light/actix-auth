@@ -41,10 +41,13 @@ async fn main() -> Result<()> {
     // Starts server
     HttpServer::new(move || {
         App::new()
+            // Database
             .data(client.clone())
+            // Auth
             .wrap(IdentityService::new(
                 CookieIdentityPolicy::new(&move_config.auth.salt.as_bytes()).secure(false), // Restrict to https?
             ))
+            // Routes
             .route("/", web::get().to(status))
             .route("/user{_:/?}", web::get().to(get_user))
             .route("/user/register{_:/?}", web::post().to(register))

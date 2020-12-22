@@ -4,7 +4,7 @@ I am a novice at best, I do many things wrong, but I do things clearly and gener
 
 I could not find any simple examples so I thought I might aswell put this out for anyone like me.
 
-A truly simple illustration of basic authorisation using [actix-web](https://actix.rs/) and [MongoDB](https://www.google.com/search?client=firefox-b-d&q=rust+mongodb) with [rust-argon2](https://github.com/sru-systems/rust-argon2).
+A truly simple illustration of basic authorisation using [actix-web](https://actix.rs/) and [MongoDB](https://github.com/mongodb/mongo-rust-driver) with [rust-argon2](https://github.com/sru-systems/rust-argon2).
 
 ## Examples
 

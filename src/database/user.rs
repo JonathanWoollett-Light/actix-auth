@@ -49,7 +49,7 @@ pub async fn login(
         )
         .await?
     {
-        // Convert struct to bson
+        // Convert bson to struct
         let user = bson::from_document(user_doc)?;
 
         return Ok(user);
@@ -74,7 +74,7 @@ pub async fn get_user(
         )
         .await?
     {
-        // Convert struct to bson
+        // Convert bson to struct
         let user = bson::from_document(user_doc)?;
 
         return Ok(user);

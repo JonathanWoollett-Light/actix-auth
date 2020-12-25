@@ -73,7 +73,14 @@ pub async fn logout(_db_client: web::Data<Client>, id: Identity) -> impl Respond
 pub async fn get_user(db_client: web::Data<Client>, id: Identity) -> impl Responder {
     // If user cookie has some id
     if let Some(_id) = id.identity() {
-        return auth_respond(database::get_user(db_client.get_ref(), _id).await);
+        return match database::get_user(db_client.get_ref(), _id).await {
+            Ok(Some(user)) => {
+                let body = user.render_once().unwrap();
+                HttpResponse::Ok().content_type("text/html; charset=utf-8").body(body)
+            }
+            Ok(None) => HttpResponse::Unauthorized().into(),
+            Err(_) => HttpResponse::InternalServerError().into(),
+        };
     }
     return HttpResponse::InternalServerError().into();
 }
@@ -82,13 +89,6 @@ pub async fn get_user(db_client: web::Data<Client>, id: Identity) -> impl Respon
 fn respond<T: Serialize, P>(result: Result<T, P>) -> HttpResponse {
     match result {
         Ok(item) => HttpResponse::Ok().json(item),
-        Err(_) => HttpResponse::InternalServerError().into(),
-    }
-}
-fn auth_respond<T: Serialize, P>(result: Result<Option<T>, P>) -> HttpResponse {
-    match result {
-        Ok(Some(item)) => HttpResponse::Ok().json(item),
-        Ok(None) => HttpResponse::Unauthorized().into(),
         Err(_) => HttpResponse::InternalServerError().into(),
     }
 }

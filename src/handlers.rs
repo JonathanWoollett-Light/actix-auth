@@ -7,6 +7,8 @@ use argon2::Config;
 use mongodb::Client;
 use serde::Serialize;
 
+use sailfish::TemplateOnce;
+
 // Basic check
 pub async fn status() -> impl Responder {
     web::HttpResponse::Ok().finish()
@@ -17,20 +19,30 @@ pub async fn register(
     db_client: web::Data<Client>,
     json: web::Json<UserRegister>,
 ) -> impl Responder {
-    respond(database::register(
-        db_client.get_ref(), // Gets reference to `Client`
-        json.into_inner() // Unwraps `web::Json<UserRegister>` into `UserRegister`
-    ).await)
+    respond(
+        database::register(
+            db_client.get_ref(), // Gets reference to `Client`
+            json.into_inner(),   // Unwraps `web::Json<UserRegister>` into `UserRegister`
+        )
+        .await,
+    )
+}
+
+// Gets login page
+pub async fn get_login() -> impl Responder {
+    web::HttpResponse::Ok()
+        .content_type("text/html; charset=utf-8")
+        .body(include_str!("./views/login.html"))
 }
 
 // Logs in
 pub async fn login(
     db_client: web::Data<Client>,
-    json: web::Json<UserLogin>,
+    form: web::Form<UserLogin>,
     id: Identity,
 ) -> impl Responder {
-    // Unwraps `web::Json<UserLogin>` into `UserLogin`
-    let data = json.into_inner();
+    // Unwraps `web::Form<UserLogin>` into `UserLogin`
+    let data = form.into_inner();
 
     // Hashes password
     let hash = argon2::hash_encoded(data.password.as_bytes(), SALT, &Config::default()).unwrap();
@@ -39,9 +51,14 @@ pub async fn login(
     match database::login(db_client.get_ref(), &data.email, &hash).await {
         Ok(Some(user)) => {
             id.remember(user._id.to_string()); // Constructs cookie session
-            HttpResponse::Ok().json(user)
+            let body = user.render_once().unwrap(); // Constructs html
+            HttpResponse::Ok()
+                .content_type("text/html; charset=utf-8")
+                .body(body)
         }
-        Ok(None) => HttpResponse::Unauthorized().into(),
+        Ok(None) => HttpResponse::Unauthorized()
+            .content_type("text/html; charset=utf-8")
+            .body(include_str!("./views/login.html")),
         Err(_) => HttpResponse::InternalServerError().into(),
     }
 }

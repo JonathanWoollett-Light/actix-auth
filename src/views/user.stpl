@@ -1,0 +1,8 @@
+<html>
+  <body>
+    <ul>
+      <li>Email: <%= email %></li>
+      <li>Data: <%= data %></li>
+    </ul>
+  </body>
+</html>

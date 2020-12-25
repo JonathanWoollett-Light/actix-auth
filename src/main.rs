@@ -56,6 +56,7 @@ async fn main() -> Result<()> {
             .route("/", web::get().to(status))
             .route("/user{_:/?}", web::get().to(get_user))
             .route("/user/register{_:/?}", web::post().to(register))
+            .route("/user/login{_:/?}", web::get().to(get_login))
             .route("/user/login{_:/?}", web::post().to(login))
             .route("/user/logout{_:/?}", web::post().to(logout))
     })

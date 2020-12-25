@@ -19,6 +19,10 @@ actix-rt="1.1.1"
 actix-web="3.3.2"
 serde = { version="1.0.118", features=["derive"] }
 
+# templating
+sailfish = {version="0.3.0", features=["derive"]}
+sailfish-macros = "0.3.0"
+
 # setup
 dotenv = "0.15.0"
 config = "0.10.1"

@@ -1,7 +1,9 @@
 use crate::SALT;
 use argon2::Config;
 use bson::oid::ObjectId;
+use sailfish::TemplateOnce;
 use serde::{Deserialize, Serialize};
+
 // Data for user registration
 #[derive(Serialize, Deserialize, Debug)]
 pub struct UserRegister {
@@ -11,14 +13,15 @@ pub struct UserRegister {
 }
 
 // Data for user login
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct UserLogin {
     pub email: String,
     pub password: String,
 }
 
 // All user data
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, TemplateOnce)]
+#[template(path = "user.stpl")]
 pub struct User {
     pub _id: ObjectId,
     pub email: String,

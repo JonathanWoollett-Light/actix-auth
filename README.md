@@ -10,4 +10,24 @@ On the `front-end` branch you will also find an illustration of an implementatio
 
 ## Examples
 
-todo
+### Startup
+
+<img width="600" src="https://github.com/JonathanWoollett-Light/actix-auth/blob/master/examples/start.png">
+
+### Registration
+
+Using [Insomnia](https://insomnia.rest/)
+
+<img width="600" src="https://github.com/JonathanWoollett-Light/actix-auth/blob/master/examples/register.png">
+
+### Login
+
+<img width="600" src="https://github.com/JonathanWoollett-Light/actix-auth/blob/master/examples/login.png">
+
+### Logged in
+
+<img width="600" src="https://github.com/JonathanWoollett-Light/actix-auth/blob/master/examples/logged-in.png">
+
+### Getting user
+
+<img width="600" src="https://github.com/JonathanWoollett-Light/actix-auth/blob/master/examples/get-user.png">

@@ -10,9 +10,6 @@ use dotenv::dotenv;
 use mongodb::Client;
 use std::{env, io::Result};
 
-// Salt for encrypting passwords
-const SALT: &[u8] = b"=F#!AA9Ev$Ve3m@FUenH-uz?ccYkf,";
-
 // The names of the database and collection we want to use.
 const DB: &str = "auth";
 const COLLECTION: &str = "users";
@@ -42,6 +39,8 @@ async fn main() -> Result<()> {
     dotenv().ok();
     let config = crate::config::Config::from_env().unwrap();
     let move_config = config.clone(); // This is probably a bad way of doing this
+
+    println!("Running...");
 
     // Starts server
     HttpServer::new(move || {

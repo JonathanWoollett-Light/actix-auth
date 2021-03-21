@@ -34,8 +34,7 @@ pub async fn register(
 // Returns user data if given user info matches email and password hash
 pub async fn login(
     db_client: &Client,
-    email: &str,
-    hash: &str,
+    user_login: UserLogin,
 ) -> Result<Option<User>, Box<dyn std::error::Error>> {
     // Gets database and collection
     let db = db_client.database(DB);
@@ -44,15 +43,16 @@ pub async fn login(
     // If we find some user in our database with a matching email and hash
     if let Some(user_doc) = collection
         .find_one(
-            doc! { "email": email, "hash": hash }, // Where email==email && hash==hash
-            None,                                  // No addtional options
+            doc! { "email" : user_login.email }, // Where email==email
+            None,                                // No addtional options
         )
         .await?
     {
-        // Convert bson to struct
-        let user = bson::from_document(user_doc)?;
-
-        return Ok(user);
+        let user: User = bson::from_document(user_doc)?;
+        if argon2::verify_encoded(&user.hash, user_login.password.as_bytes())? {
+            // Convert bson to struct
+            return Ok(Some(user));
+        }
     }
     return Ok(None);
 }

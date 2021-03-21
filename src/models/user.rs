@@ -1,6 +1,6 @@
-use crate::SALT;
 use argon2::Config;
 use bson::oid::ObjectId;
+use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use sailfish::TemplateOnce;
 use serde::{Deserialize, Serialize};
 
@@ -32,11 +32,21 @@ pub struct User {
 // (used when we go through the registration process)
 impl From<UserRegister> for User {
     fn from(post_user: UserRegister) -> Self {
+        // random 30 character alpha-numeric string
+        let salt: String = thread_rng()
+            .sample_iter(&Alphanumeric)
+            .take(30)
+            .map(char::from)
+            .collect();
         Self {
             _id: ObjectId::new(),   // Construct new `ObjectId`
             email: post_user.email, // Sets email
-            hash: argon2::hash_encoded(post_user.password.as_bytes(), SALT, &Config::default())
-                .unwrap(), // hashes password
+            hash: argon2::hash_encoded(
+                post_user.password.as_bytes(),
+                salt.as_bytes(),
+                &Config::default(),
+            )
+            .unwrap(), // hashes password
             data: post_user.data,   // Sets data
         }
     }

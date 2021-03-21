@@ -1,8 +1,7 @@
-use crate::{database, models::*, SALT};
+use crate::{database, models::*};
 use actix_web::{web, HttpResponse, Responder};
 
 use actix_identity::Identity;
-use argon2::Config;
 
 use mongodb::Client;
 use serde::Serialize;
@@ -41,14 +40,8 @@ pub async fn login(
     form: web::Form<UserLogin>,
     id: Identity,
 ) -> impl Responder {
-    // Unwraps `web::Form<UserLogin>` into `UserLogin`
-    let data = form.into_inner();
-
-    // Hashes password
-    let hash = argon2::hash_encoded(data.password.as_bytes(), SALT, &Config::default()).unwrap();
-
     // The error checking here is a little awkward, but it is clear.
-    match database::login(db_client.get_ref(), &data.email, &hash).await {
+    match database::login(db_client.get_ref(), form.into_inner()).await {
         Ok(Some(user)) => {
             id.remember(user._id.to_string()); // Constructs cookie session
             let body = user.render_once().unwrap(); // Constructs html
@@ -76,7 +69,9 @@ pub async fn get_user(db_client: web::Data<Client>, id: Identity) -> impl Respon
         return match database::get_user(db_client.get_ref(), _id).await {
             Ok(Some(user)) => {
                 let body = user.render_once().unwrap();
-                HttpResponse::Ok().content_type("text/html; charset=utf-8").body(body)
+                HttpResponse::Ok()
+                    .content_type("text/html; charset=utf-8")
+                    .body(body)
             }
             Ok(None) => HttpResponse::Unauthorized().into(),
             Err(_) => HttpResponse::InternalServerError().into(),

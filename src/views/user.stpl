@@ -4,5 +4,8 @@
       <li>Email: <%= email %></li>
       <li>Data: <%= data %></li>
     </ul>
+    <form action="/user/logout" method="post">
+      <input type="submit" value="Logout">
+    </form>  
   </body>
 </html>

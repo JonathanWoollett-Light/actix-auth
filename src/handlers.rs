@@ -64,6 +64,7 @@ pub async fn logout(_db_client: web::Data<Client>, id: Identity) -> impl Respond
 
 // Gets user data
 pub async fn get_user(db_client: web::Data<Client>, id: Identity) -> impl Responder {
+    println!("id: {:.?}",id.identity());
     // If user cookie has some id
     if let Some(_id) = id.identity() {
         return match database::get_user(db_client.get_ref(), _id).await {
@@ -77,7 +78,7 @@ pub async fn get_user(db_client: web::Data<Client>, id: Identity) -> impl Respon
             Err(_) => HttpResponse::InternalServerError().into(),
         };
     }
-    return HttpResponse::InternalServerError().into();
+    return HttpResponse::Unauthorized().into();
 }
 
 // A couple utility functions to make returns a bit cleaner

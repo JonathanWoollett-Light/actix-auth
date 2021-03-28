@@ -16,7 +16,7 @@ const COLLECTION: &str = "users";
 
 // Run with: "cargo run <username> <password>"
 
-#[actix_rt::main]
+#[actix_web::main]
 async fn main() -> Result<()> {
     println!("Started.");
 
